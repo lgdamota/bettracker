@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { useAuth } from '@/components/auth-provider'
 
 interface NavbarProps {
   className?: string
@@ -9,6 +10,7 @@ interface NavbarProps {
 
 export function Navbar({ className = '' }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { isAuthenticated, logout } = useAuth()
 
   const navigationItems = [
     { name: 'Sobre', href: '/' },
@@ -52,13 +54,30 @@ export function Navbar({ className = '' }: NavbarProps) {
           </div>
 
           {/* CTA Button - Lado Direito */}
-          <div className="hidden md:flex">
-            <Link 
-              href="/dashboard" 
-              className="bg-primary text-primary-foreground px-6 py-2 rounded-lg font-semibold hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            >
-              Ver Apostas
-            </Link>
+          <div className="hidden md:flex gap-3">
+            {!isAuthenticated ? (
+              <>
+                <Link 
+                  href="/login" 
+                  className="bg-transparent border border-primary/30 text-primary px-6 py-2 rounded-lg font-semibold hover:bg-primary/10 transition-all duration-200"
+                >
+                  Entrar
+                </Link>
+                <Link 
+                  href="/register" 
+                  className="bg-primary text-primary-foreground px-6 py-2 rounded-lg font-semibold hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                >
+                  Começar Agora
+                </Link>
+              </>
+            ) : (
+              <button
+                onClick={logout}
+                className="bg-destructive text-destructive-foreground px-6 py-2 rounded-lg font-semibold hover:bg-destructive/90 transition-all duration-200"
+              >
+                Sair
+              </button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -89,12 +108,29 @@ export function Navbar({ className = '' }: NavbarProps) {
               </Link>
             ))}
             <div className="border-t border-border my-2"></div>
-            <Link 
-              href="/dashboard" 
-              className="block mx-4 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold text-center hover:bg-primary/90 transition-all duration-200"
-            >
-              Ver Apostas
-            </Link>
+            {!isAuthenticated ? (
+              <>
+                <Link 
+                  href="/login" 
+                  className="block mx-4 bg-transparent border border-primary/30 text-primary px-6 py-3 rounded-lg font-semibold text-center hover:bg-primary/10 transition-all duration-200"
+                >
+                  Entrar
+                </Link>
+                <Link 
+                  href="/register" 
+                  className="block mx-4 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold text-center hover:bg-primary/90 transition-all duration-200"
+                >
+                  Começar Agora
+                </Link>
+              </>
+            ) : (
+              <button
+                onClick={logout}
+                className="block mx-4 bg-destructive text-destructive-foreground px-6 py-3 rounded-lg font-semibold text-center hover:bg-destructive/90 transition-all duration-200"
+              >
+                Sair
+              </button>
+            )}
           </div>
         </div>
       </div>

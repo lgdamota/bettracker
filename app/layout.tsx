@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { AuthProvider } from '@/components/auth-provider'
 import { Navbar } from '@/components/navbar'
 import './globals.css'
 
@@ -39,12 +40,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR" className="dark">
+    <html lang="pt-BR" className="dark" suppressHydrationWarning>
       <body className={`${poppins.variable} font-sans antialiased`}>
-        <Navbar />
-        <main className="pt-16">
-          {children}
-        </main>
+        <AuthProvider>
+          <Navbar />
+          <main className="pt-16">
+            {children}
+          </main>
+        </AuthProvider>
         <Analytics />
       </body>
     </html>

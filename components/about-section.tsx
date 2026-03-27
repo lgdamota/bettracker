@@ -79,13 +79,13 @@ export function AboutSection() {
 
           {/* CTA Button */}
           <div className="pt-4">
-            <Link href="/dashboard">
+            <Link href="/register">
               <Button 
                 className="bg-[color:oklch(var(--brand-cyan-light))] text-[color:oklch(var(--brand-cyan-light-foreground))] hover:bg-[color:oklch(var(--brand-cyan-light))]/90 gap-2 font-semibold text-lg px-8 py-6 text-white shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] transition-all duration-300 transform hover:scale-105"
                 onMouseEnter={() => setIsChartHovered(true)}
                 onMouseLeave={() => setIsChartHovered(false)}
               >
-                Ver Apostas
+                Começar Agora
                 <ChevronRight className="h-5 w-5" />
               </Button>
             </Link>
@@ -237,7 +237,7 @@ export function AboutSection() {
               <div className="bg-gradient-to-r from-[color:oklch(var(--brand-cyan-light))]/20 to-transparent border border-[color:oklch(var(--brand-cyan-light))]/30 rounded-xl p-8 text-center">
                 <h3 className="text-2xl font-bold text-foreground mb-4">Pronto para transformar sua banca?</h3>
                 <p className="text-muted-foreground mb-6">Junte-se a milhares de apostadores que já confiam na BetTracker para alcançar resultados consistentes.</p>
-                <Link href="/dashboard">
+                <Link href="/register">
                   <Button 
                     className="bg-[color:oklch(var(--brand-cyan-light))] text-white hover:bg-[color:oklch(var(--brand-cyan-light))]/90 font-semibold px-8 py-4 text-lg shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] transition-all duration-300"
                   >
