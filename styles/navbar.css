@@ -1,0 +1,318 @@
+/* Navbar Styles - SaaS Modern Design */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+/* Logo/Brand - Lado Esquerdo */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  z-index: 1001;
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+}
+
+.brand-link:hover {
+  background-color: var(--color-accent);
+}
+
+.brand-text {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-foreground);
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--color-foreground), var(--color-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Navigation Menu - Centro */
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex: 1;
+  justify-content: center;
+  z-index: 1001;
+}
+
+.nav-link {
+  color: var(--color-foreground);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.nav-link:hover {
+  color: var(--color-primary);
+  background-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-primary);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 60%;
+}
+
+/* CTA Button - Lado Direito */
+.navbar-cta {
+  display: flex;
+  align-items: center;
+  z-index: 1001;
+}
+
+.nav-cta-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  text-decoration: none;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-cta-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.nav-cta-btn:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+  border-color: #16a34a;
+}
+
+.nav-cta-btn:hover::before {
+  left: 100%;
+}
+
+.nav-cta-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+}
+
+.navbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+}
+
+.hamburger {
+  width: 24px;
+  height: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+}
+
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-foreground);
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 1rem;
+  }
+  
+  .navbar-nav,
+  .navbar-cta {
+    display: none;
+  }
+  
+  .navbar-toggle {
+    display: block;
+  }
+  
+  .navbar-mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: var(--color-background);
+    border-left: 1px solid var(--color-border);
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+    padding: 4rem 2rem 2rem;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: right 0.3s ease;
+    z-index: 999;
+  }
+  
+  .navbar-mobile-menu.active {
+    right: 0;
+  }
+  
+  .navbar-mobile-menu .nav-link {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+  }
+  
+  .navbar-mobile-menu .nav-cta-btn {
+    width: 100%;
+    margin-top: auto;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .brand-text {
+    font-size: 1.25rem;
+  }
+}
+
+/* Tablet Styles */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .navbar-container {
+    padding: 1rem 1.5rem;
+  }
+  
+  .nav-link {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .nav-cta-btn {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Dark Mode Adjustments */
+@media (prefers-color-scheme: dark) {
+  .navbar {
+    background: rgba(22, 23, 27, 0.8);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .mobile-menu {
+    background: rgba(22, 23, 27, 0.95);
+    border-left-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Animation for smooth appearance */
+.navbar {
+  animation: navbarSlideIn 0.5s ease-out;
+}
+
+@keyframes navbarSlideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments for very small screens */
+@media (max-width: 480px) {
+  .navbar-container {
+    padding: 0.75rem;
+  }
+  
+  .brand-text {
+    font-size: 1.125rem;
+  }
+  
+  .mobile-menu {
+    width: 260px;
+    padding: 3rem 1.5rem 2rem;
+  }
+  
+  .nav-link {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+  
+  .nav-cta-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+}
