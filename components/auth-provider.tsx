@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { auth, AuthState, AppUser, authUtils } from '@/lib/auth'
 
 interface AuthContextType extends AuthState {
+  loading: boolean
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>
   logout: () => Promise<{ success: boolean; error?: string }>
@@ -12,17 +13,21 @@ interface AuthContextType extends AuthState {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>({
+  const [state, setState] = useState<AuthState & { loading: boolean }>({
     user: null,
     isAuthenticated: false,
-    session: null
+    session: null,
+    loading: true
   })
 
   useEffect(() => {
     // Verifica autenticação ao montar o componente
     const initializeAuth = async () => {
       const authState = await auth.checkAuth()
-      setState(authState)
+      setState({
+        ...authState,
+        loading: false
+      })
     }
     
     initializeAuth()
@@ -34,13 +39,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setState({
           user,
           isAuthenticated: true,
-          session
+          session,
+          loading: false
         })
       } else if (event === 'SIGNED_OUT') {
         setState({
           user: null,
           isAuthenticated: false,
-          session: null
+          session: null,
+          loading: false
         })
       }
     })
@@ -57,7 +64,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setState({
           user: result.user,
           isAuthenticated: true,
-          session: await auth.getSession()
+          session: await auth.getSession(),
+          loading: false
         })
         return { success: true }
       }
@@ -75,7 +83,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setState({
           user: result.user,
           isAuthenticated: true,
-          session: await auth.getSession()
+          session: await auth.getSession(),
+          loading: false
         })
         return { success: true }
       }
@@ -93,7 +102,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setState({
           user: null,
           isAuthenticated: false,
-          session: null
+          session: null,
+          loading: false
         })
         return { success: true }
       }
@@ -118,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 }
 
-export function useAuth(): AuthContextType {
+export function useAuth(): AuthContextType & { loading: boolean } {
   const context = useContext(AuthContext)
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider')

@@ -10,6 +10,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { useAuth } from '@/components/auth-provider'
 
 interface KPI {
   title: string
@@ -20,6 +21,13 @@ interface KPI {
 
 export function AboutSection() {
   const [isChartHovered, setIsChartHovered] = useState(false)
+  const { isAuthenticated, loading } = useAuth()
+  
+  // Determina destino do botão baseado na autenticação
+  const getButtonHref = () => {
+    if (loading) return '#'
+    return isAuthenticated ? '/dashboard' : '/register'
+  }
 
   const kpis: KPI[] = [
     {
@@ -79,14 +87,29 @@ export function AboutSection() {
 
           {/* CTA Button */}
           <div className="pt-4">
-            <Link href="/register">
+            <Link href={getButtonHref()}>
               <Button 
                 className="bg-[color:oklch(var(--brand-cyan-light))] text-[color:oklch(var(--brand-cyan-light-foreground))] hover:bg-[color:oklch(var(--brand-cyan-light))]/90 gap-2 font-semibold text-lg px-8 py-6 text-white shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] transition-all duration-300 transform hover:scale-105"
                 onMouseEnter={() => setIsChartHovered(true)}
                 onMouseLeave={() => setIsChartHovered(false)}
+                disabled={loading}
               >
-                Começar Agora
-                <ChevronRight className="h-5 w-5" />
+                {loading ? (
+                  <>
+                    <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div>
+                    Carregando...
+                  </>
+                ) : isAuthenticated ? (
+                  <>
+                    Ir para Dashboard
+                    <ChevronRight className="h-5 w-5" />
+                  </>
+                ) : (
+                  <>
+                    Começar Agora
+                    <ChevronRight className="h-5 w-5" />
+                  </>
+                )}
               </Button>
             </Link>
           </div>
@@ -237,12 +260,24 @@ export function AboutSection() {
               <div className="bg-gradient-to-r from-[color:oklch(var(--brand-cyan-light))]/20 to-transparent border border-[color:oklch(var(--brand-cyan-light))]/30 rounded-xl p-8 text-center">
                 <h3 className="text-2xl font-bold text-foreground mb-4">Pronto para transformar sua banca?</h3>
                 <p className="text-muted-foreground mb-6">Junte-se a milhares de apostadores que já confiam na BetTracker para alcançar resultados consistentes.</p>
-                <Link href="/register">
+                <Link href={getButtonHref()}>
                   <Button 
                     className="bg-[color:oklch(var(--brand-cyan-light))] text-white hover:bg-[color:oklch(var(--brand-cyan-light))]/90 font-semibold px-8 py-4 text-lg shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] transition-all duration-300"
+                    disabled={loading}
                   >
-                    Começar Agora
-                    <Sparkle className="h-5 w-5 ml-2" />
+                    {loading ? (
+                      'Carregando...'
+                    ) : isAuthenticated ? (
+                      <>
+                        Ir para Dashboard
+                        <Sparkle className="h-5 w-5 ml-2" />
+                      </>
+                    ) : (
+                      <>
+                        Começar Agora
+                        <Sparkle className="h-5 w-5 ml-2" />
+                      </>
+                    )}
                   </Button>
                 </Link>
               </div>
