@@ -47,14 +47,14 @@ export default function RegisterPage() {
     }
 
     try {
-      const success = await register(name, email, password)
-      if (success) {
+      const result = await register(name, email, password)
+      if (result.success) {
         setSuccess(true)
         setTimeout(() => {
           router.push('/dashboard')
         }, 1500)
       } else {
-        setError('Este email já está em uso')
+        setError(result.error || 'Este email já está em uso')
       }
     } catch (err) {
       setError('Ocorreu um erro ao criar a conta')

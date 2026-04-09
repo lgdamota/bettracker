@@ -1,99 +1,165 @@
 // Tipos de autenticação
-export interface User {
+import { createClient, Session } from '@supabase/supabase-js'
+
+export interface AppUser {
   id: string
   name: string
   email: string
 }
 
 export interface AuthState {
-  user: User | null
+  user: AppUser | null
   isAuthenticated: boolean
+  session: Session | null
 }
 
-// Chave para localStorage
-const AUTH_TOKEN_KEY = 'bettracker_auth_token'
-const USER_DATA_KEY = 'bettracker_user_data'
+// Inicializa o cliente Supabase
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-// Funções de autenticação
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+// Funções de autenticação com Supabase
 export const auth = {
-  // Login - armazena token e dados do usuário
-  login: (user: User): void => {
-    const token = btoa(`${user.email}_${Date.now()}`)
-    localStorage.setItem(AUTH_TOKEN_KEY, token)
-    localStorage.setItem(USER_DATA_KEY, JSON.stringify(user))
+  // Login com Supabase
+  login: async (email: string, password: string): Promise<{ user: AppUser | null; error: string | null }> => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+
+      if (error) {
+        return { user: null, error: error.message }
+      }
+
+      if (data.user) {
+        const userData: AppUser = {
+          id: data.user.id,
+          name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || '',
+          email: data.user.email || ''
+        }
+        
+        return { user: userData, error: null }
+      }
+
+      return { user: null, error: 'Usuário não encontrado' }
+    } catch (error) {
+      return { user: null, error: 'Erro ao realizar login' }
+    }
   },
 
-  // Logout - remove dados do localStorage
-  logout: (): void => {
-    localStorage.removeItem(AUTH_TOKEN_KEY)
-    localStorage.removeItem(USER_DATA_KEY)
+  // Registro com Supabase
+  register: async (name: string, email: string, password: string): Promise<{ user: AppUser | null; error: string | null }> => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name
+          }
+        }
+      })
+
+      if (error) {
+        return { user: null, error: error.message }
+      }
+
+      if (data.user) {
+        const userData: AppUser = {
+          id: data.user.id,
+          name: name,
+          email: data.user.email || ''
+        }
+        
+        return { user: userData, error: null }
+      }
+
+      return { user: null, error: 'Erro ao criar conta' }
+    } catch (error) {
+      return { user: null, error: 'Erro ao criar conta' }
+    }
+  },
+
+  // Logout
+  logout: async (): Promise<{ error: string | null }> => {
+    try {
+      const { error } = await supabase.auth.signOut()
+      return { error: error?.message || null }
+    } catch (error) {
+      return { error: 'Erro ao realizar logout' }
+    }
   },
 
   // Verifica se o usuário está autenticado
-  isAuthenticated: (): boolean => {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY)
-    return !!token
+  isAuthenticated: async (): Promise<boolean> => {
+    try {
+      const { data } = await supabase.auth.getSession()
+      return !!data.session
+    } catch {
+      return false
+    }
   },
 
   // Obtém os dados do usuário atual
-  getCurrentUser: (): User | null => {
-    const userData = localStorage.getItem(USER_DATA_KEY)
-    if (!userData) return null
-    
+  getCurrentUser: async (): Promise<AppUser | null> => {
     try {
-      return JSON.parse(userData)
+      const { data } = await supabase.auth.getUser()
+      
+      if (data.user) {
+        return {
+          id: data.user.id,
+          name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || '',
+          email: data.user.email || ''
+        }
+      }
+      
+      return null
+    } catch {
+      return null
+    }
+  },
+
+  // Obtém a sessão atual
+  getSession: async (): Promise<Session | null> => {
+    try {
+      const { data } = await supabase.auth.getSession()
+      return data.session
     } catch {
       return null
     }
   },
 
   // Verifica se pode acessar rotas protegidas
-  checkAuth: (): AuthState => {
-    const isAuthenticated = auth.isAuthenticated()
-    const user = isAuthenticated ? auth.getCurrentUser() : null
+  checkAuth: async (): Promise<AuthState> => {
+    const isAuthenticated = await auth.isAuthenticated()
+    const user = isAuthenticated ? await auth.getCurrentUser() : null
+    const session = isAuthenticated ? await auth.getSession() : null
     
     return {
       user,
-      isAuthenticated
+      isAuthenticated,
+      session
     }
-  }
-}
+  },
 
-// Mock de usuários para teste
-const MOCK_USERS = [
-  {
-    id: '1',
-    name: 'Usuário Demo',
-    email: 'demo@betracker.com',
-    password: 'demo123'
+  // Escuta mudanças de autenticação
+  onAuthStateChange: (callback: (event: string, session: Session | null) => void) => {
+    return supabase.auth.onAuthStateChange((event, session) => {
+      callback(event, session)
+    })
   }
-]
-
-// Função de login com validação
-export const validateLogin = (email: string, password: string): User | null => {
-  const user = MOCK_USERS.find(u => u.email === email && u.password === password)
-  return user || null
-}
-
-// Função de registro (para demo)
-export const registerUser = (name: string, email: string, password: string): User | null => {
-  // Verifica se já existe
-  const existing = MOCK_USERS.find(u => u.email === email)
-  if (existing) return null
-  
-  const newUser = {
-    id: Date.now().toString(),
-    name,
-    email,
-    password
-  }
-  
-  MOCK_USERS.push(newUser)
-  return newUser
 }
 
 // Exporta as funções de validação para uso externo
 export const authUtils = {
-  validateLogin,
-  registerUser
+  login: auth.login,
+  register: auth.register,
+  logout: auth.logout,
+  isAuthenticated: auth.isAuthenticated,
+  getCurrentUser: auth.getCurrentUser,
+  getSession: auth.getSession,
+  checkAuth: auth.checkAuth,
+  onAuthStateChange: auth.onAuthStateChange
 }
