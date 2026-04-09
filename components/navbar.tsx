@@ -13,11 +13,8 @@ export function Navbar({ className = '' }: NavbarProps) {
   const { isAuthenticated, logout } = useAuth()
 
   const navigationItems = [
-    { name: 'Sobre', href: '/' },
-    { name: 'Serviço', href: '/servico' },
-    { name: 'Análise', href: '/analise' },
-    { name: 'Fluxo', href: '/fluxo' },
-    { name: 'Planos', href: '/planos' },
+    { name: 'Sobre', href: '/' }
+   
   ]
 
   return (
